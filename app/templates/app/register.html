@@ -1,0 +1,56 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block register_content %}
+  <main>
+        <section class="learn">
+           <h1>Learn to code by<br>watching others</h1>
+           <p>See how experienced developers solve problems in real-time. <br> Watching scripted tutorials is great, but understanding how <br> developers think is invaluable.</p>  
+        </section>
+
+
+            
+    <div class="sign-up">
+        <form action="." method="POST" class="signup-form" data-netlify="true">
+            {% csrf_token %}
+              <div class="form-btn">
+             <label for="{{ form.first_name.id_for_label }}">Tên:</label>
+             {{ form.first_name }}
+             <span class="error text-danger">{{ form.first_name.errors }}</span>
+            </div>
+              <div class="form-btn">
+             <label for="{{ form.last_name.id_for_label }}">Họ:</label>
+             {{ form.last_name }}
+             <span class="error text-danger">{{ form.last_name.errors }}</span>
+            </div>
+            <div class="form-btn">
+             <label for="{{ form.username.id_for_label }}">Tài khoản:</label>
+             {{ form.username }}
+             <span class="error text-danger">{{ form.username.errors }}</span>
+            </div>
+
+            
+            <div class="form-btn">
+                  <label for="{{ form.email.id_for_label }}">Email:</label>
+             {{ form.email }}
+             <span class="error text-danger">{{ form.email.errors }}</span>
+            </div>
+
+            <div class="form-btn">
+                <label for="{{ form.password1.id_for_label }}">Mật khẩu:</label>
+                {{ form.password1 }}
+                <span class="error text-danger">{{ form.password1.errors }}</span>
+            </div>
+            
+            <div class="form-btn">
+                <label for="{{ form.password2.id_for_label }}">Nhập lại mật khẩu:</label>
+                {{ form.password2 }}
+                <span class="error text-danger">{{ form.password2.errors }}</span>
+            </div>
+
+            <input id="submit-btn" type="submit" value="Đăng Ký" id="btn">
+
+            <p class="terms">By clicking the button, you are agreeing to our <span><a href="#">Terms and Services</a></span></p>
+        </form>
+        </section>
+    </main>
+{% endblock register_content %}

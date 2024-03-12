@@ -1,0 +1,26 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block login_content %}
+  <main>     
+    <div class="sign-up">
+        <form action="." method="POST" class="signup-form" data-netlify="true">
+            {% csrf_token %}
+            <div class="form-btn">
+             <label for="username">Tài khoản:</label>
+             <input type="text" name="username" required id="username" wfd-id="id1">
+            </div>
+
+            <div class="form-btn">
+                <label for="password">Mật khẩu:</label>
+               <input type="password" name="password" required id="password" wfd-id="id1">
+               {% for message in messages %}
+               <span class="error text-danger">{{ message}}</span>
+               {% endfor %}
+            </div>
+            <input id="submit-btn" type="submit" value="Đăng Nhập" id="btn">
+
+            <p class="terms">By clicking the button, you are agreeing to our <span><a href="#">Terms and Services</a></span></p>
+        </form>
+        </section>
+    </main>
+{% endblock login_content %}
