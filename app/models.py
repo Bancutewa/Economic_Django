@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+
 class Category(models.Model):
     sub_category = models.ForeignKey('self', on_delete = models.CASCADE,related_name = 'sub_categories', null = True, blank = True)
     is_sub = models.BooleanField(default = False)

@@ -123,7 +123,6 @@ def checkOut(request):
 
 def updateItem(request):
     data = json.loads(request.body)
-    print(data)
     # Request body dc gui len server
     productId = data['productId']
     action = data['action']
@@ -137,6 +136,8 @@ def updateItem(request):
         orderItem.quantity += 1
     elif action == 'remove':
         orderItem.quantity -= 1
+    elif action == 'delete':
+        orderItem.delete()
     orderItem.save()
     if orderItem.quantity <= 0:
         orderItem.delete()
