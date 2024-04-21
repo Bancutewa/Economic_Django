@@ -132,9 +132,9 @@ def updateItem(request):
         orderItem.quantity += 1
     elif action == 'remove':
         orderItem.quantity -= 1
-    elif action == 'delete':
-        orderItem.delete()
     orderItem.save()
+    if action == 'delete':
+        orderItem.delete()
     if orderItem.quantity <= 0:
         orderItem.delete()
     return JsonResponse("added",safe=False)
