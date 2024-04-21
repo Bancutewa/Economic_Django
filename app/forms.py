@@ -1,6 +1,7 @@
 from django import forms
 import re
 from django.contrib.auth.models import User
+from .models import Comment, Profile
 
 class RegistrationForm(forms.Form):
     username = forms.CharField(label='Tài khoản', max_length=30, widget=forms.TextInput())
@@ -49,3 +50,34 @@ class RegistrationForm(forms.Form):
 
     def save(self):
         User.objects.create_user(username=self.cleaned_data['username'], email=self.cleaned_data['email'], password=self.cleaned_data['password1'],first_name=self.cleaned_data['first_name'],last_name=self.cleaned_data['last_name'],)
+
+
+class CommentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.author = kwargs.pop('author', None)
+        self.product = kwargs.pop('product', None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        comment = super().save(commit=False)
+        comment.author = self.author
+        comment.product = self.product.first()
+        comment.save()
+
+    class Meta:
+        model = Comment
+        fields = ["body"]
+
+
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField()
+
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['image']

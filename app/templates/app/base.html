@@ -64,9 +64,7 @@
                     </button>
                     <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
-                            <a href="index.html" class="nav-item nav-link active">Home</a>
-                            <a href="shop.html" class="nav-item nav-link">Shop</a>
-                            <a href="shop-detail.html" class="nav-item nav-link">Shop Detail</a>
+                            <a href="{% url "home" %}" class="nav-item nav-link active">Home</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
@@ -75,7 +73,6 @@
                                     {% endfor %}
                                 </div>
                             </div>
-                            <a href="contact.html" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="d-flex justify-content-center align-items-center m-3 me-0">
                             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
@@ -83,18 +80,20 @@
                                 <i class="fa fa-shopping-bag fa-2x"></i>
                                 <span id='cart-total' class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">{{cartItems}}</span>
                             </a>
-                            
+                                {% if user.is_authenticated %}
+                                
                                 <div class="dropdown" style = "visibility:{{user_login}}">
                                     <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                      Xin chào {{request.user}}
                                     </a>
                                   
                                     <ul class="dropdown-menu">
-                                      <li><a class="dropdown-item" href="#">Tài khoản của tôi</a></li>
+                                      <li><a class="dropdown-item" href="{% url "profile" %}">Tài khoản của tôi</a></li>
                                       <li><a class="dropdown-item" href="{% url "cart" %}">Đơn mua</a></li>
                                       <li><a class="dropdown-item" href="{% url "logout" %}">Đăng xuất</a></li>
                                     </ul>
                                   </div>
+                                  {% else %}
                                   <div class='d-flex' style = "visibility:{{user_not_login}}">
                                     <a href="{% url "login" %}" class="position-relative me-4 my-auto">
                                         <span >Đăng nhập</span>
@@ -103,6 +102,7 @@
                                         <span >Đăng Ký</span>
                                      </a>
                                   </div>
+                                {% endif %}
                            
                         </div>
                     </div>
@@ -149,7 +149,7 @@
 </div>
 <!-- Modal Search End -->
    <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">Cart</h1>
+            <h1 class="text-center text-white display-6">Welcome</h1>
             <ol class="breadcrumb justify-content-center mb-0">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
                 <li class="breadcrumb-item"><a href="#">Pages</a></li>

@@ -1,12 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from PIL import Image
 # Create your models here.
 
 
 class Category(models.Model):
-    sub_category = models.ForeignKey('self', on_delete = models.CASCADE,related_name = 'sub_categories', null = True, blank = True)
-    is_sub = models.BooleanField(default = False)
     name = models.CharField(max_length=200, null=True)
     slug = models.SlugField(max_length = 200, unique = True)
     def __str__(self):
@@ -14,9 +12,11 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=200, null=True)
     price = models.FloatField()
-    image = models.ImageField(null=True, blank=True)
-    category = models.ManyToManyField(Category, related_name='product')
+    discount = models.FloatField()
+    image = models.ImageField(null=True, blank=True, upload_to='products_pics')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank= True)
     description = models.CharField(max_length=200, null=True)
+    date = models.DateField(auto_now_add=True)
     
     def __str__(self):
         return self.name
@@ -28,6 +28,9 @@ class Product(models.Model):
         except:
             url = ''
         return url
+    @property
+    def lastPrice(self):
+        return self.price - (self.price * self.discount) / 100  
 class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank= True)
     date_order = models.DateTimeField(auto_now_add = True)
@@ -41,7 +44,7 @@ class Order(models.Model):
     def get_cart_items(self):
         orderitems = self.orderitem_set.all()
         total = sum([item.quantity for item in orderitems])
-        return total
+        return total    
     
         # Ham tra ve total price in Order 
     @property
@@ -71,4 +74,26 @@ class ShippingAddress(models.Model):
         return self.address
 
 
+class Comment(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE )
+    body = models.TextField()
+    date_added =  models.DateTimeField(auto_now_add = True   ) 
+    
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(default='default-avatar-icon-of-social-media-user-vector.jpg', upload_to='profile_pics')
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
+
+    def save(self, *args, **kwargs):
+        super(Profile, self).save(*args, **kwargs)
+
+        img = Image.open(self.image.path)
+
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.image.path)
