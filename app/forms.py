@@ -1,7 +1,7 @@
 from django import forms
 import re
 from django.contrib.auth.models import User
-from .models import Comment, Profile
+from .models import Comment, Profile, ShippingAddress
 
 class RegistrationForm(forms.Form):
     username = forms.CharField(label='Tài khoản', max_length=30, widget=forms.TextInput())
@@ -52,6 +52,7 @@ class RegistrationForm(forms.Form):
         User.objects.create_user(username=self.cleaned_data['username'], email=self.cleaned_data['email'], password=self.cleaned_data['password1'],first_name=self.cleaned_data['first_name'],last_name=self.cleaned_data['last_name'],)
 
 
+
 class CommentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.author = kwargs.pop('author', None)
@@ -81,3 +82,8 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['image']
+        
+class ShippingAddressForm(forms.ModelForm):
+    class Meta:
+        model = ShippingAddress
+        fields = ("customer", "order", "address", "mobile")

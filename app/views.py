@@ -11,6 +11,7 @@ from random import sample
 def register(request):
     if request.user.is_authenticated:
         customer = request.user
+        
         order, created = Order.objects.get_or_create(customer = customer, complete = False)
         items = order.orderitem_set.all()
         cartItems = order.get_cart_items
@@ -73,15 +74,8 @@ def home(request):
        
     products = Product.objects.all().order_by("-date")
     
-    # Lấy tất cả các sản phẩm và sắp xếp ngẫu nhiên
-    all_products = Product.objects.all().order_by('?')
-    
     # Lấy n sản phẩm ngẫu nhiên từ danh sách
-    random_products = sample(list(all_products), ( len(all_products)))
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        id = data['categoryID']
-        products = Product.objects.filter(category_id=id)
+    random_products = sample(list(products), ( len(products)))
     categories = Category.objects.all()
     context = {'products' : products,'categories' :categories, 'cartItems':cartItems, 'random_products': random_products   }
     return render(request,"app/home.html",context)
@@ -91,14 +85,11 @@ def cart(request):
         customer = request.user
         order, created = Order.objects.get_or_create(customer = customer, complete = False)
         items = order.orderitem_set.all()
-        cartItems = order.get_cart_items
-       
-        
+        cartItems = order.get_cart_items 
     else:
         items= []
         order = {"get_cart_items":0,"get_cart_total":0 }
         cartItems = order['get_cart_items']
-       
     categories = Category.objects.all()
     context = {'items':items, 'order':order, 'cartItems':cartItems, 'categories':categories}
     return render(request,"app/cart.html",context)
@@ -109,13 +100,34 @@ def checkOut(request):
         order, created = Order.objects.get_or_create(customer = customer, complete = False)
         items = order.orderitem_set.all()
         cartItems = order.get_cart_items
+        form = ShippingAddressForm()
+        if request.method == 'POST':
+            form = ShippingAddressForm(request.POST)
+            if form.is_valid():
+                form.instance.customer = customer
+                form.instance.order = order
+                form.save()
+                for item in items:
+                    product = item.product
+                    quantity_to_reduce = item.quantity
+                    if product.quantity >= quantity_to_reduce:
+                        product.quantity -= quantity_to_reduce
+                        product.save()
+                        order.complete = True  # Đặt complete thành True
+                    else:
+                        messages.info(request, f"Số lượng sản phẩm {product.name} chỉ còn {product.quantity}.")
+                        order.complete = False
+                order.save()  # Lưu lại đơn hàng sau khi complete đã được thay đổi
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        else:
+            form = ShippingAddressForm()
     else:
         items= []
         cartItems = order['get_cart_items']
         order = {"get_cart_items":0,"get_cart_total":0 }
     
     categories = Category.objects.all()
-    context = {'items':items, 'order':order, 'cartItems':cartItems, "categories": categories }
+    context = {'items':items, 'order':order,"form":form, 'cartItems':cartItems, "categories": categories}
     return render(request,"app/checkout.html",context)
 
 def updateItem(request):
@@ -144,8 +156,6 @@ def searchProduct(request):
         order, created = Order.objects.get_or_create(customer = customer, complete = False)
         items = order.orderitem_set.all()
         cartItems = order.get_cart_items
-       
-        
     else:
         items= []
         cartItems = order['get_cart_items']
@@ -174,14 +184,13 @@ def categoryProduct(request):
         
     else:
         items= []
-        cartItems = order['get_cart_items']
         order = {"get_cart_items":0,"get_cart_total":0 }
        
     active_category = request.GET.get('category', '')
     if active_category:
         products = Product.objects.filter(category__slug = active_category)
     categories = Category.objects.all()
-    context = { 'products':products, 'active_category':active_category, "categories": categories,'items':items, 'order':order, 'cartItems':cartItems }
+    context = { 'products':products, 'active_category':active_category, "categories": categories,'items':items, 'order':order }
     
     return render(request, "app/category.html", context)
 

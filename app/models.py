@@ -12,6 +12,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=200, null=True)
     price = models.FloatField()
+    quantity = models.IntegerField(default = 0, null = True, blank = True)
     discount = models.FloatField()
     image = models.ImageField(null=True, blank=True, upload_to='products_pics')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank= True)
@@ -22,6 +23,7 @@ class Product(models.Model):
         return self.name
 
     @property
+    # Lay duong dan hinh
     def ImageURL(self):
         try:
             url = self.image.url
@@ -35,7 +37,6 @@ class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank= True)
     date_order = models.DateTimeField(auto_now_add = True)
     complete = models.BooleanField(default = False, null = True, blank = False)
-    transaction_id = models.CharField(max_length = 200, null = True)
     
     def __str__(self):
         return str(self.id)
@@ -65,11 +66,12 @@ class OrderItem(models.Model):
         return total
 
 class ShippingAddress(models.Model):
-    customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank= True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank= True)
-    address = models.CharField(max_length = 200, null = True)
-    mobile = models.CharField(max_length = 10, null = True)
-    date_added =  models.DateTimeField(auto_now_add = True   )
+    customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
+    address = models.CharField(max_length=200, null=True)
+    mobile = models.CharField(max_length=10, null=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return self.address
 

@@ -191,15 +191,21 @@
                         <p class="text-dark fs-5 fw-bold mb-0">
                           ${{product.price}} / kg
                         </p>
+                        {% if product.quantity > 0  %}
                         <p
-                          href="!#"
-                          data-product="{{product.id}}"
-                          data-action="add"
-                          class="btn border border-secondary rounded-pill px-3 text-primary updated-cart"
-                        >
-                          <i class="fa fa-shopping-bag me-2 text-primary"></i>
-                          Add to cart
-                        </p>
+                        href="!#"
+                        data-product="{{product.id}}"
+                        data-action="add"
+                        class="btn border border-secondary rounded-pill px-3 text-primary updated-cart"
+                      >
+                      
+                        <i class="fa fa-shopping-bag me-2 text-primary"></i>
+                        Add to cart
+                      </p>
+                      {% else %}
+                      <p>Hết hàng</P>
+                        {% endif %}
+                       
                       </div>
                     </div>
                   </div>
