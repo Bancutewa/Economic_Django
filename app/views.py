@@ -114,6 +114,7 @@ def checkOut(request):
                         product.quantity -= quantity_to_reduce
                         product.save()
                         order.complete = True  # Đặt complete thành True
+                        messages.info(request, f"Đã thanh toán thành công.")
                     else:
                         messages.info(request, f"Số lượng sản phẩm {product.name} chỉ còn {product.quantity}.")
                         order.complete = False

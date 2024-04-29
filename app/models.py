@@ -17,7 +17,7 @@ class Product(models.Model):
     image = models.ImageField(null=True, blank=True, upload_to='products_pics')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank= True)
     description = models.CharField(max_length=200, null=True)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.name
@@ -32,7 +32,7 @@ class Product(models.Model):
         return url
     @property
     def lastPrice(self):
-        return self.price - (self.price * self.discount) / 100  
+        return round(self.price - (self.price * self.discount) / 100, 2)
 class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank= True)
     date_order = models.DateTimeField(auto_now_add = True)
@@ -62,7 +62,7 @@ class OrderItem(models.Model):
     
     @property
     def get_total(self):
-        total = self.product.price * self.quantity
+        total = self.product.lastPrice * self.quantity
         return total
 
 class ShippingAddress(models.Model):
